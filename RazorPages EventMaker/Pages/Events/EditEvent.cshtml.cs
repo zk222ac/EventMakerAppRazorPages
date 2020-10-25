@@ -8,34 +8,30 @@ using RazorPages_EventMaker.Models;
 
 namespace RazorPages_EventMaker.Pages.Events
 {
-    public class IndexModel : PageModel
+    public class EditEventModel : PageModel
     {
         private FakeEventRepository repo;
-        public List<Event> Events { get; private set; }
-        public Event Event { get; private set; }
 
-        public IndexModel()
+        [BindProperty]
+        public Event Event { get; set; }
+
+        public EditEventModel()
         {
             repo = FakeEventRepository.Instance;
         }
-        public void OnGet()
+        public IActionResult OnGet(int id)
         {
-            Events = repo.GetAllEvents();
+            Event = repo.GetEvent(id);
+            return Page();
         }
-
-        public ActionResult OnPostDeleteAsync(int id)
+        public IActionResult OnPost()
         {
-            Event = repo.GetEvent(id);  
             if(!ModelState.IsValid)
             {
                 return Page();
             }
-            repo.DeleteEvent(Event);
-            return RedirectToPage();
+            repo.UpdateEvent(Event);
+            return RedirectToPage("Index");
         }
-
-       
-
-
     }
 }
